@@ -132,12 +132,12 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     ) {
       if (token == "X") {
         console.log("Player One Winner!");
-        board.resetBoard();
+        // board.resetBoard();
         board.printBoard();
         return;
       } else {
         console.log("Player Two Winner!");
-        board.resetBoard();
+        // board.resetBoard();
         board.printBoard();
         return;
       }
@@ -154,7 +154,58 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     }
   };
 
-  return { playRound, getActivePlayer };
+  return { playRound, getActivePlayer, getBoard: board.getBoard };
 }
 
 const game = GameController();
+
+function ScreenController() {
+  const game = GameController();
+  const playerTurnDiv = document.querySelector(".turn");
+  const boardDiv = document.querySelector(".board");
+
+  const updateScreen = () => {
+    // clear the board
+    boardDiv.textContent = "";
+
+    let rowIndex = 0;
+
+    // get the newest version of the board and player turn
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    // Display player's turn
+    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+    // Render board squares
+    board.forEach((row) => {
+      row.forEach((cell, columnIndex) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        // Create a data attribute to identify the column
+        // This makes it easier to pass into our `playRound` function
+        cellButton.dataset.row = rowIndex;
+        cellButton.dataset.column = columnIndex;
+        cellButton.textContent = cell.getValue();
+        boardDiv.appendChild(cellButton);
+      });
+      rowIndex++;
+    });
+  };
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+    console.log(selectedRow);
+    console.log(selectedColumn);
+    // Make sure I've clicked a column and not the gaps in between
+    if (!selectedColumn || !selectedRow) return;
+
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  updateScreen();
+}
+
+ScreenController();
