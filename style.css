@@ -1,13 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+:root {
+  --primary-color: #45474b;
+  --secondary-color: #495e57;
+  --body-color: #f5f7f8;
+  --txt-color: #f4ce14;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Rubik", sans-serif;
+}
+
+html {
+  /* font-size: 10px; */
+  /* 10px / 16px = 0.625 = 62.5% */
+  /* Percentage of user's browser font-size setting */
+  font-size: 62.5%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+  background-color: var(--body-color);
+}
+
+.body-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-section {
+  padding: 4rem 8rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-txt {
+  font-size: 4em;
+  letter-spacing: -1px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.tac {
+  color: var(--txt-color);
+}
+
+.toe {
+  color: var(--secondary-color);
+}
+
+.container {
+  max-width: 80vw;
+  margin: 0 auto;
+}
+
 .board {
   display: grid;
-  height: 500px;
-  width: 500px;
+  height: 400px;
+  width: 400px;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  border: 1px solid black;
-  gap: 2px;
-  padding: 2px;
-  background-color: yellow;
+  gap: 1.5rem;
+  background-color: var(--body-color);
 }
 
 .cell {
@@ -16,7 +80,40 @@
   align-items: center;
   text-align: center;
   font-size: 2rem;
-  border: 1px solid grey;
-  background: lightyellow;
+  border-radius: 10px;
+  border: 8px solid var(--secondary-color);
+  background: var(--txt-color);
   cursor: pointer;
+}
+
+.xHover:hover {
+  background-image: url("image/x.png");
+  background-size: 70px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.oHover:hover {
+  background-image: url("image/o.png");
+  background-size: 70px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.addXSlot {
+  background-image: url("image/xSlot.png");
+  background-size: 70px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.addOSlot {
+  background-image: url("image/oSlot.png");
+  background-size: 70px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.reset {
+  display: none;
 }
