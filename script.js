@@ -36,7 +36,6 @@ function GameBoard() {
     const boardWithValues = board.map((row) =>
       row.map((cell) => cell.getValue())
     );
-    console.log(boardWithValues);
     return boardWithValues;
   };
 
@@ -64,6 +63,7 @@ function Cell() {
 
 function GameController(playerOne = "Player One", playerTwo = "Player Two") {
   const board = GameBoard();
+  let isGameOver = false;
 
   const players = [
     {
@@ -90,8 +90,21 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
   };
 
   const playRound = (row, column) => {
-    let slot = board.pickSlot(row, column, getActivePlayer().token);
-    checkSlot(slot);
+    if (isGameOver) {
+      console.log("cannot play round game already over");
+    } else {
+      let slot = board.pickSlot(row, column, getActivePlayer().token);
+      checkSlot(slot);
+    }
+  };
+
+  const gameOver = () => {
+    return isGameOver;
+  };
+
+  const setGameStatus = () => {
+    activePlayer = players[0];
+    return (isGameOver = false);
   };
 
   const checkSlot = (slot) => {
@@ -132,14 +145,12 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     ) {
       if (token == "X") {
         console.log("Player One Winner!");
-        // board.resetBoard();
         board.printBoard();
-        return;
+        return (isGameOver = true);
       } else {
         console.log("Player Two Winner!");
-        // board.resetBoard();
         board.printBoard();
-        return;
+        return (isGameOver = true);
       }
     }
 
@@ -154,15 +165,23 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     }
   };
 
-  return { playRound, getActivePlayer, getBoard: board.getBoard };
+  return {
+    playRound,
+    getActivePlayer,
+    gameOver,
+    setGameStatus,
+    getBoard: board.getBoard,
+    resetBoard: board.resetBoard,
+  };
 }
 
-const game = GameController();
+// const game = GameController();
 
 function ScreenController() {
   const game = GameController();
   const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
+  const resetBtn = document.querySelector(".reset");
 
   const updateScreen = () => {
     // clear the board
@@ -175,28 +194,44 @@ function ScreenController() {
     const activePlayer = game.getActivePlayer();
 
     // Display player's turn
-    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+    // playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+    // Reset Game Button if Game Over
+    if (game.gameOver()) {
+      resetBtn.style.display = "block";
+    } else {
+      resetBtn.style.display = "none";
+    }
 
     // Render board squares
     board.forEach((row) => {
       row.forEach((cell, columnIndex) => {
         const cellButton = document.createElement("button");
         cellButton.classList.add("cell");
+        if (game.getActivePlayer().token == "X") {
+          cellButton.classList.add("xHover");
+        } else {
+          cellButton.classList.add("oHover");
+        }
+        if (cell.getValue() == "X") {
+          cellButton.classList.add("addXSlot");
+          cellButton.classList.add("meow");
+        } else if (cell.getValue() == "O") {
+          cellButton.classList.add("addOSlot");
+        }
         // Create a data attribute to identify the column
         // This makes it easier to pass into our `playRound` function
         cellButton.dataset.row = rowIndex;
         cellButton.dataset.column = columnIndex;
-        cellButton.textContent = cell.getValue();
         boardDiv.appendChild(cellButton);
       });
       rowIndex++;
     });
   };
+
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
-    console.log(selectedRow);
-    console.log(selectedColumn);
     // Make sure I've clicked a column and not the gaps in between
     if (!selectedColumn || !selectedRow) return;
 
@@ -204,6 +239,13 @@ function ScreenController() {
     updateScreen();
   }
   boardDiv.addEventListener("click", clickHandlerBoard);
+  resetBtn.addEventListener("click", () => {
+    if (game.gameOver()) {
+      game.resetBoard();
+      game.setGameStatus();
+      updateScreen();
+    }
+  });
 
   updateScreen();
 }

@@ -74,6 +74,11 @@ body {
   background-color: var(--body-color);
 }
 
+.cell:active {
+  transform: scale(0.7);
+  transition: 100ms;
+}
+
 .cell {
   display: flex;
   justify-content: center;
