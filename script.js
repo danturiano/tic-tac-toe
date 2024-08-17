@@ -23,11 +23,9 @@ function GameBoard() {
 
   const pickSlot = (row, column, player) => {
     if (board[row][column].getValue() == " ") {
-      console.log(`Dropping token into row ${row} & column ${column}`);
       board[row][column].setValue(player);
       return true;
     } else {
-      console.log("Slot already chosen, Please choose another cell!");
       return false;
     }
   };
@@ -64,6 +62,7 @@ function Cell() {
 function GameController(playerOne = "Player One", playerTwo = "Player Two") {
   const board = GameBoard();
   let isGameOver = false;
+  let isGameDraw = false;
 
   const players = [
     {
@@ -91,7 +90,6 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
 
   const playRound = (row, column) => {
     if (isGameOver) {
-      console.log("cannot play round game already over");
     } else {
       let slot = board.pickSlot(row, column, getActivePlayer().token);
       checkSlot(slot);
@@ -102,9 +100,14 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     return isGameOver;
   };
 
+  const gameDraw = () => {
+    return isGameDraw;
+  };
+
   const setGameStatus = () => {
     activePlayer = players[0];
-    return (isGameOver = false);
+    isGameOver = false;
+    isGameDraw = false;
   };
 
   const checkSlot = (slot) => {
@@ -144,12 +147,8 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
         boardCheck[2][0] == token)
     ) {
       if (token == "X") {
-        console.log("Player One Winner!");
-        board.printBoard();
         return (isGameOver = true);
       } else {
-        console.log("Player Two Winner!");
-        board.printBoard();
         return (isGameOver = true);
       }
     }
@@ -159,9 +158,7 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     }
 
     if (isBoardFull(boardCheck)) {
-      console.log("Its a Draw!");
-      board.resetBoard();
-      board.printBoard();
+      return (isGameDraw = true);
     }
   };
 
@@ -169,6 +166,7 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
     playRound,
     getActivePlayer,
     gameOver,
+    gameDraw,
     setGameStatus,
     getBoard: board.getBoard,
     resetBoard: board.resetBoard,
@@ -197,7 +195,7 @@ function ScreenController() {
     // playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
 
     // Reset Game Button if Game Over
-    if (game.gameOver()) {
+    if (game.gameOver() || game.gameDraw()) {
       resetBtn.style.display = "block";
     } else {
       resetBtn.style.display = "none";
@@ -215,7 +213,6 @@ function ScreenController() {
         }
         if (cell.getValue() == "X") {
           cellButton.classList.add("addXSlot");
-          cellButton.classList.add("meow");
         } else if (cell.getValue() == "O") {
           cellButton.classList.add("addOSlot");
         }
@@ -240,7 +237,7 @@ function ScreenController() {
   }
   boardDiv.addEventListener("click", clickHandlerBoard);
   resetBtn.addEventListener("click", () => {
-    if (game.gameOver()) {
+    if (game.gameOver() || game.gameDraw()) {
       game.resetBoard();
       game.setGameStatus();
       updateScreen();
