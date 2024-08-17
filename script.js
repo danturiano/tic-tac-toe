@@ -177,9 +177,11 @@ function GameController(playerOne = "Player One", playerTwo = "Player Two") {
 
 function ScreenController() {
   const game = GameController();
-  const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
   const resetBtn = document.querySelector(".reset");
+  const statusText = document.querySelector(".statusText");
+
+  statusText.textContent = "LET'S PLAY TICTACTOE!";
 
   const updateScreen = () => {
     // clear the board
@@ -193,6 +195,7 @@ function ScreenController() {
 
     // Display player's turn
     // playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+    // statusText.textContent = `${activePlayer.name}'s TURN`;
 
     // Reset Game Button if Game Over
     if (game.gameOver() || game.gameDraw()) {
