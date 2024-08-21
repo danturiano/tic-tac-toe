@@ -229,6 +229,24 @@ function ScreenController() {
     });
   };
 
+  function updateStatusBoard() {
+    if (game.gameOver()) {
+      if (game.getActivePlayer().token == "X") {
+        statusText.textContent = "PLAYER 2 WINS!";
+      } else {
+        statusText.textContent = "PLAYER 1 WINS!";
+      }
+    } else if (game.gameDraw()) {
+      statusText.textContent = "GAMEDRAW!";
+    } else if (game.getActivePlayer().token == "X") {
+      statusText.textContent = "PLAYER 1 TURN!";
+    } else if (game.getActivePlayer().token == "O") {
+      statusText.textContent = "PLAYER 2 TURN!";
+    } else if (game.gameDraw()) {
+      statusText.textContent = "GAMEDRAW!";
+    }
+  }
+
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
@@ -237,10 +255,12 @@ function ScreenController() {
 
     game.playRound(selectedRow, selectedColumn);
     updateScreen();
+    updateStatusBoard();
   }
   boardDiv.addEventListener("click", clickHandlerBoard);
   resetBtn.addEventListener("click", () => {
     if (game.gameOver() || game.gameDraw()) {
+      statusText.textContent = "PLAYER 1 TURN!";
       game.resetBoard();
       game.setGameStatus();
       updateScreen();
