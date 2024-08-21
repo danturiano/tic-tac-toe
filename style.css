@@ -163,3 +163,10 @@ body {
   font-size: 3rem;
   color: var(--body-color);
 }
+
+.start {
+  font-family: var(--game-font);
+  background-color: var(--secondary-color);
+  color: var(--txt-color);
+  font-size: 2.3rem;
+}

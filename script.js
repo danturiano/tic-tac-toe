@@ -180,8 +180,17 @@ function ScreenController() {
   const boardDiv = document.querySelector(".board");
   const resetBtn = document.querySelector(".reset");
   const statusText = document.querySelector(".statusText");
+  const startBtn = document.querySelector(".start");
+
+  let gameStarted = false;
 
   statusText.textContent = "LET'S PLAY TICTACTOE!";
+
+  startBtn.addEventListener("click", () => {
+    gameStarted = true;
+    statusText.textContent = "PLAYER 1 TURN!";
+    startBtn.style.display = "none";
+  });
 
   const updateScreen = () => {
     // clear the board
@@ -209,14 +218,14 @@ function ScreenController() {
       row.forEach((cell, columnIndex) => {
         const cellButton = document.createElement("button");
         cellButton.classList.add("cell");
-        if (game.getActivePlayer().token == "X") {
+        if (game.getActivePlayer().token == "X" && gameStarted) {
           cellButton.classList.add("xHover");
-        } else {
+        } else if (game.getActivePlayer().token == "O" && gameStarted) {
           cellButton.classList.add("oHover");
         }
-        if (cell.getValue() == "X") {
+        if (cell.getValue() == "X" && gameStarted) {
           cellButton.classList.add("addXSlot");
-        } else if (cell.getValue() == "O") {
+        } else if (cell.getValue() == "O" && gameStarted) {
           cellButton.classList.add("addOSlot");
         }
         // Create a data attribute to identify the column
@@ -230,32 +239,36 @@ function ScreenController() {
   };
 
   function updateStatusBoard() {
-    if (game.gameOver()) {
-      if (game.getActivePlayer().token == "X") {
-        statusText.textContent = "PLAYER 2 WINS!";
-      } else {
-        statusText.textContent = "PLAYER 1 WINS!";
+    if (gameStarted) {
+      if (game.gameOver()) {
+        if (game.getActivePlayer().token == "X") {
+          statusText.textContent = "PLAYER 2 WINS!";
+        } else {
+          statusText.textContent = "PLAYER 1 WINS!";
+        }
+      } else if (game.gameDraw()) {
+        statusText.textContent = "GAMEDRAW!";
+      } else if (game.getActivePlayer().token == "X") {
+        statusText.textContent = "PLAYER 1 TURN!";
+      } else if (game.getActivePlayer().token == "O") {
+        statusText.textContent = "PLAYER 2 TURN!";
+      } else if (game.gameDraw()) {
+        statusText.textContent = "GAMEDRAW!";
       }
-    } else if (game.gameDraw()) {
-      statusText.textContent = "GAMEDRAW!";
-    } else if (game.getActivePlayer().token == "X") {
-      statusText.textContent = "PLAYER 1 TURN!";
-    } else if (game.getActivePlayer().token == "O") {
-      statusText.textContent = "PLAYER 2 TURN!";
-    } else if (game.gameDraw()) {
-      statusText.textContent = "GAMEDRAW!";
     }
   }
 
   function clickHandlerBoard(e) {
-    const selectedRow = e.target.dataset.row;
-    const selectedColumn = e.target.dataset.column;
-    // Make sure I've clicked a column and not the gaps in between
-    if (!selectedColumn || !selectedRow) return;
+    if (gameStarted) {
+      const selectedRow = e.target.dataset.row;
+      const selectedColumn = e.target.dataset.column;
+      // Make sure I've clicked a column and not the gaps in between
+      if (!selectedColumn || !selectedRow) return;
 
-    game.playRound(selectedRow, selectedColumn);
-    updateScreen();
-    updateStatusBoard();
+      game.playRound(selectedRow, selectedColumn);
+      updateScreen();
+      updateStatusBoard();
+    }
   }
   boardDiv.addEventListener("click", clickHandlerBoard);
   resetBtn.addEventListener("click", () => {
